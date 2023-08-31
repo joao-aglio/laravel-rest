@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
@@ -165,6 +166,54 @@ class UserController extends Controller
                 "error" => $e->getMessage()
             ];
 
+        }
+    }
+
+    public function login(LoginRequest $request){
+
+        $input = $request->all();
+
+        $credentials = [
+            "username" => $input["username"],
+            "password" => $input["password"]
+        ];
+
+        if (auth()->attempt($credentials)) {
+
+            $usuario = auth()->user();
+            $token = $usuario->createToken('Library')->accessToken;
+
+            return response()->json([
+                "status" => true,
+                "token" => $token,
+                "escopo" => auth()->user()->user_type->description
+            ], 200);
+
+        } else {
+
+            return response()->json([
+                "status" => false,
+                'error' => 'You are not allowed to make this request.'
+            ], 401);
+
+        };
+    }
+
+    public function logout()
+    {
+        if (auth()->check()) {
+            auth()->user()->token()->revoke();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Logout successful.'
+            ], 200);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'error' => 'Logout error. Maybe your token was already revoked. Please try again if thats not the case.'
+            ], 500);
         }
     }
 }

@@ -22,6 +22,7 @@ class CreateBooksTable extends Migration
             $table->date("publish_date");
             $table->foreignId('category_id')->constrained('categories');
             $table->boolean('active')->default(1);
+            $table->string("cover", 700);
         });
     }
 

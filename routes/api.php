@@ -21,10 +21,13 @@ use App\Http\Controllers\ReserveBookController;
 |
 */
 
+Route::post('logout', [UserController::class, 'logout']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post("login", [UserController::class, 'login']);
 Route::resources([
     'users' => UserController::class,
     'books' => BookController::class,
@@ -34,3 +37,9 @@ Route::resources([
     'userTypes' => UserTypeController::class,
     'reservesBooks' => ReserveBookController::class
 ]);
+
+Route::middleware("auth:api")->group(function() {
+
+    Route::post('logout', [UserController::class, 'logout']);
+    
+});
