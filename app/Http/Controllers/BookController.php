@@ -66,7 +66,7 @@ class BookController extends Controller
 
             $book = new Book(["name" => $data["name"],  "author" => $data["author"], 
             "publisher_id" => $data["publisher_id"], "publish_date" => $data["publish_date"], 
-            "category_id" => $data['category_id'], "cover" => $imagePath . "/" . $imageName]);
+            "category_id" => $data['category_id'], "cover" => $imageName]);
 
             $book->save();
 
