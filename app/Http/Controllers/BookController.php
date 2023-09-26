@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
-
-use Exception;
+use App\Models\ReserveBook;
+use App\Models\Reserve;
 
 class BookController extends Controller
 {
@@ -17,35 +17,20 @@ class BookController extends Controller
      */
     public function index()
     {
+        $mybooks = ReserveBook::getMyBooks();
 
-        try {
+        $mybooksId = collect();
 
-            $obj = new Book();
-            $books = $obj->all();
-
-            return [
-                'status' => 1,
-                'data' => $books
-            ];
-
-        } catch (Exception $e) {
-
-            return [
-                "status" => 0,
-                "error" => $e->getMessage(),
-            ];
+        foreach ($mybooks as $mybook){
+            $mybooksId->push($mybook->id);
         }
-        
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $books = Book::whereNotIn("id", $mybooksId)->get();
+
+        return [
+            'status' => 1,
+            'data' => $books
+        ];
     }
 
     /**
@@ -56,33 +41,26 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        try {
-            $file = $request->file('cover');
-            $imageName = time().'.'.$file->extension();
-            $imagePath = public_path(). '/images';
-            $file->move($imagePath, $imageName);
 
-            $data = $request->all();
+        $file = $request->file('cover');
+        $imageName = time() . '.' . $file->extension();
+        $imagePath = public_path() . '/images';
+        $file->move($imagePath, $imageName);
 
-            $book = new Book(["name" => $data["name"],  "author" => $data["author"], 
-            "publisher_id" => $data["publisher_id"], "publish_date" => $data["publish_date"], 
-            "category_id" => $data['category_id'], "cover" => $imageName]);
+        $data = $request->all();
 
-            $book->save();
+        $book = new Book([
+            "name" => $data["name"],  "author" => $data["author"],
+            "publisher_id" => $data["publisher_id"], "publish_date" => $data["publish_date"],
+            "category_id" => $data['category_id'], "cover" => $imageName
+        ]);
 
-            return [
-                'status' => 1,
-                'data' => $book
-            ];
+        $book->save();
 
-        } catch (Exception $e){
-
-            return [
-                "status" => 0,
-                "error" => $e->getMessage(),
-            ];
-
-        }
+        return [
+            'status' => 1,
+            'data' => $book
+        ];
     }
 
     /**
@@ -93,32 +71,11 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        try {
 
-            return [
-                "status" => 1,
-                "data" => $book
-            ];
-
-        } catch (Exception $e){
-
-            return [
-                "status" => 0,
-                "error" => $e->getMessage(),
-            ];
-
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Book $book)
-    {
-        //
+        return [
+            "status" => 1,
+            "data" => $book
+        ];
     }
 
     /**
@@ -130,22 +87,13 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, Book $book)
     {
-        try {
-            $book->update($request->all());
 
-            return [
-                "status" => 1,
-                "data" => $book
-            ];
+        $book->update($request->all());
 
-        } catch (Exception $e){
-
-            return [
-                "status" => 0,
-                "error" => $e->getMessage()
-            ];
-            
-        }
+        return [
+            "status" => 1,
+            "data" => $book
+        ];
     }
 
     /**
@@ -156,23 +104,12 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        try {
 
-            $book->delete();
+        $book->delete();
 
-            return [
-                "status" => 1,
-                "data" => $book
-            ];
-
-        } catch (Exception $e){
-
-            return [
-                "status" => 1,
-                "error" => $e->getMessage()
-            ];
-
-        }
-
+        return [
+            "status" => 1,
+            "data" => $book
+        ];
     }
 }

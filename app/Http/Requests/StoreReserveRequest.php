@@ -24,7 +24,7 @@ class StoreReserveRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required',
+            'books' => 'required|array',
         ];
     }
 }

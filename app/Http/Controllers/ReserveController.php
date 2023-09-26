@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreReserveRequest;
 use App\Http\Requests\UpdateReserveRequest;
 use App\Models\Reserve;
-
+use App\Models\ReserveBook;
 use Exception;
 
 class ReserveController extends Controller
@@ -17,23 +17,11 @@ class ReserveController extends Controller
      */
     public function index()
     {
-        try {
 
-            $obj = new Reserve();
-            $reserves = $obj->all();
-
-            return [
-                'status' => 1,
-                'data' => $reserves
-            ];
-
-        } catch (Exception $e) {
-            
-            return [
-                "status" => 0,
-                "error" => $e->getMessage(),
-            ];
-        }
+        return [
+            'status' => true,
+            'mybooks' => ReserveBook::getMyBooks()
+        ];
     }
 
     /**
@@ -43,7 +31,7 @@ class ReserveController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -55,9 +43,15 @@ class ReserveController extends Controller
     public function store(StoreReserveRequest $request)
     {
         try {
-            
-            $obj = new Reserve();
-            $reserve = $obj->create($request->all());
+            $new_reserve = [];
+            $reserve = new Reserve(["user_id" => auth()->user()->id]);
+            $reserve->save();
+
+            foreach ($request->__get("books") as $book){
+                $reserve_book = new ReserveBook(['reserve_id' => $reserve->id, 'book_id' => $book]);
+                $reserve_book->save();
+                array_push($new_reserve, $reserve_book);
+            };
 
             return [
                 'status' => 1,
