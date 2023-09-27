@@ -30,7 +30,7 @@ Route::middleware("auth:api")->group(function() {
     Route::post('logout', [UserController::class, 'logout']);
 
     Route::get('auth', function(){
-        return true;
+        return auth()->user();
     });
 
     Route::resources([

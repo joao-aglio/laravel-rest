@@ -23,6 +23,7 @@ class CreateBooksTable extends Migration
             $table->foreignId('category_id')->constrained('categories');
             $table->boolean('active')->default(1);
             $table->string("cover", 700);
+            $table->longText("description");
         });
     }
 
