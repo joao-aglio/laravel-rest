@@ -18,6 +18,7 @@ class CreateReserveBookTable extends Migration
             $table->timestamps();
             $table->foreignId('book_id')->constrained('books');
             $table->foreignId('reserve_id')->constrained('reserves');
+            $table->date('reserve_until')->nullable();
             $table->boolean('active')->default(1);
         });
     }

@@ -48,7 +48,7 @@ class ReserveController extends Controller
             $reserve->save();
 
             foreach ($request->__get("books") as $book){
-                $reserve_book = new ReserveBook(['reserve_id' => $reserve->id, 'book_id' => $book]);
+                $reserve_book = new ReserveBook(['reserve_id' => $reserve->id, 'book_id' => $book, 'reserve_until' => $request->input("reserve_until")]);
                 $reserve_book->save();
                 array_push($new_reserve, $reserve_book);
             };

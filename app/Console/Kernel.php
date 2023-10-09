@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\ReserveBook;
+use Carbon\Carbon;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +17,23 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+
+            $reserves = ReserveBook::where('active', 1)->get();
+
+            foreach ($reserves as $reserve){
+
+                $data = Carbon::create($reserve->reserve_until);
+
+                if ($data->lt(now())){
+                    
+                    $reserve->active = 0;
+                    $reserve->update();
+
+                }
+            };
+
+        })->everySecond();
     }
 
     /**
