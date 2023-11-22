@@ -25,13 +25,10 @@ Route::post('logout', [UserController::class, 'logout']);
 Route::post("login", [UserController::class, 'login']);
 
 
+
+
+
 Route::middleware("auth:api")->group(function() {
-
-    Route::post('logout', [UserController::class, 'logout']);
-
-    Route::get('auth', function(){
-        return auth()->user();
-    });
 
     Route::resources([
         'users' => UserController::class,
@@ -42,5 +39,12 @@ Route::middleware("auth:api")->group(function() {
         'userTypes' => UserTypeController::class,
         'reservesBooks' => ReserveBookController::class
     ]);
+
+    Route::post('logout', [UserController::class, 'logout']);
+
+    Route::get('auth', function(){
+        return auth()->user();
+    });
+
     
 });

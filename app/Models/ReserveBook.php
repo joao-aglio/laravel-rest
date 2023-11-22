@@ -27,12 +27,15 @@ class ReserveBook extends Model
         $reserves = Reserve::where('user_id', auth()->user()->id)
         ->get();
 
-        foreach ($reserves as $reserve) {
-            $book = ReserveBook::with('book')
-                ->where('reserve_id', $reserve->id)
-                ->get()
-                ->pluck('book');
-            $mybooks->push($book);
+        if (!empty($reserves)) {
+
+            foreach ($reserves as $reserve) {
+                $book = ReserveBook::with('book')
+                    ->where('reserve_id', $reserve->id)
+                    ->get()
+                    ->pluck('book');
+                $mybooks->push($book);
+            }
         }
 
         return $mybooks->flatten(1);

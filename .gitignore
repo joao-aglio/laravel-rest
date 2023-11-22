@@ -15,4 +15,5 @@ yarn-error.log
 /.vscode
 *.jpg
 .DS_Store
+/public/images/*
 

@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\ReserveBook;
 use App\Models\Reserve;
-
+use Exception;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 class BookController extends Controller
 {
     /**
@@ -41,11 +43,12 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
+        $imagePath = public_path() . '/images/';
+        $imageName = time().'.'.'png';
 
-        $file = $request->file('cover');
-        $imageName = time() . '.' . $file->extension();
-        $imagePath = public_path() . '/images';
-        $file->move($imagePath, $imageName);
+        $file = base64_decode($request->input('cover'));
+
+        $success = file_put_contents($imagePath . $imageName, $file);
 
         $data = $request->all();
 
