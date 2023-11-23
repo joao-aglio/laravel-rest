@@ -32,8 +32,10 @@ class ReserveBook extends Model
             foreach ($reserves as $reserve) {
                 $book = ReserveBook::with('book')
                     ->where('reserve_id', $reserve->id)
+                    ->where('active', 1)
                     ->get()
                     ->pluck('book');
+
                 $mybooks->push($book);
             }
         }

@@ -28,7 +28,7 @@ class BookController extends Controller
             $mybooksId->push($mybook->id);
         }
 
-        $books = Book::whereNotIn("id", $mybooksId)->get();
+        $books = Book::whereNotIn("id", $mybooksId)->get()->sortByDesc('created_at')->values();
 
         return [
             'status' => 1,
