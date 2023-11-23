@@ -21,15 +21,11 @@ use App\Http\Controllers\ReserveBookController;
 */
 
 Route::post("login", [UserController::class, 'login']);
-
-
-
-
+Route::resource("users", UserController::class);
 
 Route::middleware("auth:api")->group(function() {
 
     Route::resources([
-        'users' => UserController::class,
         'books' => BookController::class,
         'categories' => CategoryController::class,
         'publishers' => PublisherController::class,

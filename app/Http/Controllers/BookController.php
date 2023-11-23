@@ -10,6 +10,7 @@ use App\Models\Reserve;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+
 class BookController extends Controller
 {
     /**
@@ -23,7 +24,7 @@ class BookController extends Controller
 
         $mybooksId = collect();
 
-        foreach ($mybooks as $mybook){
+        foreach ($mybooks as $mybook) {
             $mybooksId->push($mybook->id);
         }
 
@@ -44,26 +45,30 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         $imagePath = public_path() . '/images/';
-        $imageName = time().'.'.'png';
+        $imageName = time() . '.' . 'png';
 
         $file = base64_decode($request->input('cover'));
 
         $success = file_put_contents($imagePath . $imageName, $file);
 
-        $data = $request->all();
+        if ($success) {
 
-        $book = new Book([
-            "name" => $data["name"],  "author" => $data["author"],
-            "publisher_id" => $data["publisher_id"], "publish_date" => $data["publish_date"],
-            "category_id" => $data['category_id'], "cover" => $imageName, 'description' => $data['description']
-        ]);
+            $data = $request->all();
 
-        $book->save();
+            $book = new Book([
+                "name" => $data["name"],  "author" => $data["author"],
+                "publisher_id" => $data["publisher_id"], "publish_date" => $data["publish_date"],
+                "category_id" => $data['category_id'], "cover" => $imageName, 'description' => $data['description']
+            ]);
 
-        return [
-            'status' => 1,
-            'data' => $book
-        ];
+            $book->save();
+
+            return [
+                'status' => 1,
+                'data' => $book
+            ];
+            
+        } else throw new Exception("It wasn't possible to save your image.");
     }
 
     /**
